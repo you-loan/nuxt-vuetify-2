@@ -1,4 +1,10 @@
+import LRU from 'lru-cache'
 import pkg from './package'
+
+const themeCache = new LRU({
+  max: 10,
+  maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+})
 
 export default {
   mode: 'universal',
@@ -38,8 +44,23 @@ export default {
 
   // Vuetify options
   vuetify: {
-    customVariables: ['~/assets/style/variables.sass']
-    //  theme: { }
+    treeShake: true,
+    customVariables: ['~/assets/style/variables.sass'],
+    theme: {
+      themes: {
+        light: {
+          primary: '#FF5722',
+          accent: '#FFAB91',
+          success: '#4CAF50'
+        }
+      },
+      options: {
+        themeCache,
+        minifyTheme: function(css) {
+          return css.replace(/[\s|\r\n|\r|\n]/g, '')
+        }
+      }
+    }
   },
 
   /*
